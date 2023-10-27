@@ -20,6 +20,8 @@ class Data_manager:
         for line in text_blocks:
             self.text_lines.append(re.split('\n',line[4]))
 
+
+    # extracts tests results
     def get_test_result(self):
         for type in self.test_types:
             for sentence in self.text_lines:
@@ -36,6 +38,7 @@ class Data_manager:
                             self.test_results.append((type, float(num)))                
                   
 
+    #gets creation date of the file
     def get_date(self):
         data_strange = self.doc.metadata['creationDate'][2:10]
         data = ''
@@ -45,10 +48,14 @@ class Data_manager:
         self.data = data
         
 
+    #connects database
     def db_connecter(self):
         self.conn = sqlite3.connect('laboratory_data.db')
         self.c = self.conn.cursor()
 
+
+    #if database named laboratory_data.db does not exists, its creates it
+    
     def insert_data(self):
         if os.path.isfile('laboratory_data.db') == False:
             self.db_connecter()
@@ -57,13 +64,19 @@ class Data_manager:
                       result real,
                       data text
             )""")
+            self.conn.commit()
+            self.conn.close()
+            print('i created db')
 
+        #inserts values to db table named "storage_of_results"
         self.db_connecter()
         for item in self.test_results:
             self.c.execute(f"INSERT INTO storage_of_results VALUES {(item[0], item[1], self.data)}")
         self.conn.commit()
         self.conn.close()
 
+
+    #RUNS the process of data extraction with inserting into db
     def run(self):
         self.extract_text()
         self.get_test_result()
@@ -72,5 +85,4 @@ class Data_manager:
         print('Done')
         
 
-item = Data_manager('file_for_test4.pdf')
-item.run()
+
