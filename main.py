@@ -1,57 +1,90 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters, CallbackQueryHandler
-import os
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler
+from telegram.ext import MessageHandler, filters
+from graphic_builder import Graphic_builder
 from data_manager import Data_manager
-from graph_builder import Graphic_builder
+import os
 
-keyboard = [[InlineKeyboardButton('Общий белок', callback_data='Общий белок')],
-                [InlineKeyboardButton('Мочевина', callback_data='Мочевина')],
-                [InlineKeyboardButton('Креатинин', callback_data='Креатинин')]]
-reply_markup = InlineKeyboardMarkup(keyboard)
+main_keyboard = [[KeyboardButton(text='/help'), KeyboardButton(text='/get_graph')],
+            [KeyboardButton(text='/AI'), KeyboardButton(text='/get_info')]]
+main_markup = ReplyKeyboardMarkup(keyboard=main_keyboard)
+
+graph_keyboard = [[KeyboardButton(text='/creatinine'), KeyboardButton(text='/urea_nitrogen')],
+                  [KeyboardButton(text='/total_protein'),KeyboardButton(text='/back')]]
+graph_markup = ReplyKeyboardMarkup(keyboard=graph_keyboard)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(f'Hello {update.effective_user.first_name}, Я бот, который поможет тебе с твоими анализами. Нажми на одну из опций для получения динамики медицинских показателей. Для пополнения данных просто отправь PDF файл с результатами.', reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=context._chat_id, text="Hi, I'm Qolqanat, I can help you!", reply_markup=main_markup)
+
+
+async def get_graph(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.send_message(chat_id=context._chat_id, text='''
+You pressed the get_graph button. Please choose what you want to receive:''', 
+                                    reply_markup=graph_markup)
+
+
+async def back(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.send_message(chat_id=context._chat_id, text='Main menu', reply_markup=main_markup)
 
 
 async def get_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if type(update.message.document.file_id) == str:
-        file_id = update.message.document.file_id
-        new_file = await context.bot.get_file(file_id=file_id)
-        download_path = os.path.join('trash', update.message.document.file_name)
-        await new_file.download_to_drive(download_path)
-        Data_manager(download_path).run()
-        await context.bot.send_message(chat_id=context._chat_id, text="Выбери опцию", reply_markup=reply_markup)
+    try:
+        if type(update.message.document.file_id) == str:
+            file_id = update.message.document.file_id
+            new_file = await context.bot.get_file(file_id=file_id)
+            download_path = os.path.join('trash', update.message.document.file_name)
+            await new_file.download_to_drive(download_path)
+            Data_manager(download_path, username=update.effective_user.username).run()
+            print(context._user_id)
+            file_for_delete = os.path.join('trash', update.message.document.file_name)
+            os.remove(file_for_delete)
+            await context.bot.send_message(chat_id=context._chat_id, text=f"file: {update.message.document.file_name} downloaded")
+    except:
+        pass
+
+async def creatinine(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    username = update._effective_user.username
+    if os.path.isfile(f'Креатинин_{username}.png'):
+        os.remove(f'Креатинин_{username}.png')
+    Graphic_builder('Креатинин', username=username).run()
+    if os.path.isfile(f'Креатинин_{username}.png'):
+        await context.bot.send_document(chat_id=context._chat_id, document=f'Креатинин_{username}.png')
         
 
 
-async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    if type(query.data) == str:
-        if os.path.exists(f"{query.data}.png"):
-            os.remove(f"{query.data}.png")
-    if query.data == 'Общий белок':
-        Graphic_builder('Общий белок').run()
-    elif query.data == 'Мочевина':
-        Graphic_builder('Мочевина').run()
-    elif query.data == 'Креатинин':
-        Graphic_builder('Креатинин').run()
-    await query.edit_message_text(text=f"Вы выбрали: {query.data}")
-    if os.path.isfile(f'{query.data}.png'):
-        await context.bot.send_document(chat_id=query.from_user.id, document=f'{query.data}.png')
-        text = 'Выбирите опцию'
-    else:
-        text = 'Нет данных, пожалуйста отправьте данные'
-    await context.bot.send_message(chat_id=context._chat_id, text=text, reply_markup=reply_markup)
+async def total_protein(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    username = update._effective_user.username
+    if os.path.isfile(f'Общий белок_{username}.png'):
+        os.remove(f'Общий белок_{username}.png')
+    Graphic_builder('Общий белок', username=username).run()
+    if os.path.isfile(f'Общий белок_{username}.png'):
+        await context.bot.send_document(chat_id=context._chat_id, document=f'Общий белок_{username}.png')
+
+
+async def urea_nitrogen(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    username = update._effective_user.username
+    if os.path.isfile(f'Мочевина_{username}.png'):
+        os.remove(f'Мочевина_{username}.png')
+    Graphic_builder('Мочевина', username=username).run()
+    if os.path.isfile(f'Мочевина_{username}.png'):
+        await context.bot.send_document(chat_id=context._chat_id, document=f'Мочевина_{username}.png')
+
+        
 
 
 app = ApplicationBuilder().token('6358744092:AAF8Snr3NiV27Ke4ytSn6KTILUAdcBWZbxw').build()
 
 
 app.add_handler(CommandHandler('start', start))
+app.add_handler(CommandHandler('get_graph', get_graph))
+app.add_handler(CommandHandler('back', back))
+app.add_handler(CommandHandler('creatinine', creatinine))
+app.add_handler(CommandHandler('total_protein', total_protein))
+app.add_handler(CommandHandler('urea_nitrogen', urea_nitrogen))
 app.add_handler(MessageHandler(filters=filters.ALL, callback=get_doc))
-app.add_handler(CallbackQueryHandler(send_result))
+
+
 
 
 app.run_polling()
