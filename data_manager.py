@@ -12,7 +12,8 @@ class Data_manager:
         self.test_results = []
         self.test_types = ['Общий белок','Мочевина','Креатинин']
         self.doc = fitz.open(self.filename) #opens PDF file
-        self.page = self.doc[0]
+        if filename != None:
+            self.page = self.doc[0]
         self.data = ''
         
 
@@ -110,7 +111,11 @@ class Data_manager:
         self.conn.close()
 
 
-
+    def delete_table(self):
+        self.db_connecter()
+        self.c.execute(f'DROP TABLE IF EXISTS {self.username}')
+        self.conn.commit()
+        self.conn.close()
 
     #RUNS the process of data extraction with inserting into db
     def run(self):
