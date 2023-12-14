@@ -10,6 +10,8 @@ class Graphic_builder:
         self.test_name = test_name
         self.username = username
         self.x_y_data = [[], []]
+        self.y1_limit = None
+        self.y2_limit = None
         print(os.path.isfile('laboratory_data.db'))
         if os.path.isfile('laboratory_data.db') == True:
             self.conn = sqlite3.connect('laboratory_data.db')
@@ -61,20 +63,36 @@ class Graphic_builder:
 
         if self.test_name == 'Креатинин':
             ylabel = 'µmol/L'
+            self.y1_limit = 53
+            self.y2_limit = 114.9
         elif self.test_name == 'Общий белок':
             ylabel = 'g/L'
+            self.y1_limit = 60
+            self.y2_limit = 83
         elif self.test_name == 'Мочевина':
             ylabel = 'mmol/L'
+            self.y1_limit = 1.8
+            self.y2_limit = 7.1
         elif self.test_name == 'Гемоглобин':
             ylabel = 'g/L'
+            self.y1_limit = 121
+            self.y2_limit = 151
         elif self.test_name == 'эритроциты':
             ylabel = 'cells/mcL'
+            self.y1_limit = 3.92
+            self.y2_limit = 5.65
         elif self.test_name == 'Тромбоциты':
             ylabel = 'mcL'
+            self.y1_limit = 150
+            self.y2_limit = 400
         elif self.test_name == 'Холестерин':
-            ylabel = 'mg/dL'
+            ylabel = 'mmol/L)'
+            self.y1_limit = 0
+            self.y2_limit = 5.17
         elif self.test_name == 'Глюкоза':
             ylabel = 'mmol/L'
+            self.y1_limit = 5.6
+            self.y2_limit = 6.9
 
 
         plt.ylabel(ylabel)
@@ -82,6 +100,7 @@ class Graphic_builder:
         for tick in ax.get_xticklabels():
             tick.set_rotation(30)
         # save plot like a photo
+        plt.axhspan(self.y1_limit, self.y2_limit, color='lightgrey')
         self.name = f"{self.test_name}_{self.username}.png"
         plt.savefig(self.name, dpi = 400, bbox_inches='tight')
         #plt.show()
