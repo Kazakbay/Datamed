@@ -3,8 +3,10 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 import os
 
+
 class Graphic_builder:
-    def __init__(self, test_name, username):
+    def __init__(self, test_name, username, lan):
+        self.lan = lan
         self.test_name = test_name
         self.username = username
         self.x_y_data = [[], []]
@@ -17,6 +19,7 @@ class Graphic_builder:
         self.image = None
         self.name = None
         self.db_exist = None
+        self.last_result = None
     
     def extract_data(self):
         try:
@@ -36,6 +39,7 @@ class Graphic_builder:
 
         #sorts list items by date
         self.test_results.sort(key = lambda x: datetime.strptime(x[2], "%Y.%m.%d")) 
+        
     
     def build_gpaph(self):
         data_x = []
@@ -81,12 +85,43 @@ class Graphic_builder:
         self.name = f"{self.test_name}_{self.username}.png"
         plt.savefig(self.name, dpi = 400, bbox_inches='tight')
         #plt.show()
-   
+
+        
+    def ai_response(self):
+        from openai import OpenAI
+        client = OpenAI(api_key='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')
+        if self.lan == 'eng':
+            completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+            {"role": "system", "content": "You give a list of possible diagnoses according to the results of biological tests to answer on the exam. In short by 3 sentences."},
+            {"role": "user", "content": f'What is the patient’s diagnosis if the test results are as follows? {self.test_results}'}
+            ]
+            )
+        elif self.lan == 'kz':
+            completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+            {"role": "system", "content": "You give a list of possible diagnoses according to the results of biological tests to answer on the exam. In short by 3 sentences."},
+            {"role": "user", "content": f'What is the patient’s diagnosis if the test results are as follows? {self.test_results}, give answer in grammatically correct Kazakh'}
+            ]
+            )
+
+        self.chat_gpt_opinion = f"ChatGPT: \n {completion.choices[0].message.content}"
+        
+
+
     def run(self):
         self.extract_data()
         if self.db_exist == True:
             self.remove_duplicates_n_sort_by_date()
             self.build_gpaph()
+            self.ai_response()
+        
         else:
             print('Nothing to do!')
 
+        if self.chat_gpt_opinion != None:
+            return self.chat_gpt_opinion
+        else:
+            return 'No data'

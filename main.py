@@ -5,6 +5,10 @@ from graphic_builder import Graphic_builder
 from data_manager import Data_manager
 import os
 
+
+
+
+
 eng_texts = [
     ['/help🙋‍♂️', '/get_graph📊', '/extra⚙️', '/language🇰🇿/🇺🇲'],
     ['/creatinine', '/urea_nitrogen', '/total_protein', '/red_blood_cell', '/hemoglobin', '/thrombocytes','/total_cholesterol','/blood_glucose', '/back🔙'],
@@ -27,6 +31,8 @@ eng_texts = [
     ['Data deleted!'],
     ['ChatGPT-пен сөйлесу үшін [мына жерді](https://platform.openai.com/playground) басыңыз!'],
     ["Click [here](https://qolkanat.tilda.ws/kz) to visit official site!"],
+    ['Please wait, your request is in process...'],
+    ['eng']
 ]
 
 kaz_texts = [
@@ -49,7 +55,9 @@ kaz_texts = [
 ['Сіз сенімдісіз бе?: '],
 ['Деректер жойылды!'],
 ['Сілтеме ашу үшін [осында](https://platform.openai.com/playground) басыңыз!'],
-["Ресми сайтқа кіру үшін [мына жерді](https://qolkanat.tilda.ws/kz) басыңыз!"]
+["Ресми сайтқа кіру үшін [мына жерді](https://qolkanat.tilda.ws/kz) басыңыз!"],
+['Күте тұрыңыз, сұрауыңыз орындалуда...'],
+['kz']
 ]
 
 
@@ -158,9 +166,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Креатинин_{username}.png'):
             os.remove(f'Креатинин_{username}.png')
-        Graphic_builder('Креатинин', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Креатинин', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Креатинин_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Креатинин_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -171,9 +181,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Общий белок_{username}.png'):
             os.remove(f'Общий белок_{username}.png')
-        Graphic_builder('Общий белок', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Общий белок', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Общий белок_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Общий белок_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -183,9 +195,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Мочевина_{username}.png'):
             os.remove(f'Мочевина_{username}.png')
-        Graphic_builder('Мочевина', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Мочевина', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Мочевина_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Мочевина_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -196,9 +210,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Эритроциты_{username}.png'):
             os.remove(f'Эритроциты_{username}.png')
-        Graphic_builder('эритроциты', username=username).run()
+        chat_gpt_opinion = Graphic_builder('эритроциты', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Эритроциты_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Эритроциты_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -209,9 +225,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Гемоглобин_{username}.png'):
             os.remove(f'Гемоглобин_{username}.png')
-        Graphic_builder('Гемоглобин', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Гемоглобин', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Гемоглобин_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Гемоглобин_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -222,9 +240,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Тромбоциты_{username}.png'):
             os.remove(f'Тромбоциты_{username}.png')
-        Graphic_builder('Тромбоциты', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Тромбоциты', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Тромбоциты_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Тромбоциты_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -235,9 +255,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Холестерин_{username}.png'):
             os.remove(f'Холестерин_{username}.png')
-        Graphic_builder('Холестерин', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Холестерин', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Холестерин_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Холестерин_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
@@ -248,9 +270,11 @@ while True:
         username = update._effective_user.username
         if os.path.isfile(f'Глюкоза_{username}.png'):
             os.remove(f'Глюкоза_{username}.png')
-        Graphic_builder('Глюкоза', username=username).run()
+        chat_gpt_opinion = Graphic_builder('Глюкоза', username=username, lan=language[16][0]).run()
+        await context.bot.send_message(chat_id=context._chat_id, text=language[15][0])
         if os.path.isfile(f'Глюкоза_{username}.png'):
             await context.bot.send_document(chat_id=context._chat_id, document=f'Глюкоза_{username}.png')
+            await context.bot.send_message(chat_id=context._chat_id, text=chat_gpt_opinion)
         else:
             await context.bot.send_message(chat_id=context._chat_id, 
                                            text=language[8][0], reply_markup=markup_maker('main', language))
