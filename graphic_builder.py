@@ -52,6 +52,7 @@ class Graphic_builder:
             data_x.append(x)
             data_y.append(float(i[1]))
 
+
         plt.title(self.test_name)
 
         if self.test_name == 'Креатинин':
@@ -59,6 +60,16 @@ class Graphic_builder:
         elif self.test_name == 'Общий белок':
             ylabel = 'g/L'
         elif self.test_name == 'Мочевина':
+            ylabel = 'mmol/L'
+        elif self.test_name == 'Гемоглобин':
+            ylabel = 'g/L'
+        elif self.test_name == 'эритроциты':
+            ylabel = 'cells/mcL'
+        elif self.test_name == 'Тромбоциты':
+            ylabel = 'mcL'
+        elif self.test_name == 'Холестерин':
+            ylabel = 'mg/dL'
+        elif self.test_name == 'Глюкоза':
             ylabel = 'mmol/L'
 
 
@@ -79,4 +90,3 @@ class Graphic_builder:
         else:
             print('Nothing to do!')
 
-    

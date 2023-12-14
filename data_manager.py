@@ -10,7 +10,7 @@ class Data_manager:
         self.username = username # defines name of the table for inserting the data of this user
         self.text_lines = []
         self.test_results = []
-        self.test_types = ['Общий белок','Мочевина','Креатинин']
+        self.test_types = ['Общий белок','Мочевина','Креатинин', 'Гемоглобин', 'Эритроциты', 'Тромбоциты', 'Холестерин', 'Глюкоза']
         self.doc = fitz.open(self.filename) #opens PDF file
         if filename != None:
             self.page = self.doc[0]
@@ -39,7 +39,8 @@ class Data_manager:
                             else:
                                 num = lst[0]
          
-                            self.test_results.append((type, float(num)))                
+                            self.test_results.append((type, float(num)))        
+                                    
                   
 
     #gets creation date of the file
@@ -129,7 +130,9 @@ class Data_manager:
             self.add_table()
             print('I added table')
         self.insert_data()
-        print('Done')
-        
 
+        
+        print('Done')
+        print(self.test_results)
+        
 
