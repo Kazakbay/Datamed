@@ -1,0 +1,3 @@
+Here all the code which I wrote while working on QolKanat.
+It's all the codes which lead me closer to the final code 
+of QolKanat
